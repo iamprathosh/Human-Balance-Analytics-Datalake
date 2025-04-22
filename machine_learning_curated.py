@@ -13,55 +13,55 @@ job = Job(glueContext)
 job.init(args["JOB_NAME"], args)
 
 # Script generated for node S3 bucket
-S3bucket_node1 = glueContext.create_dynamic_frame.from_options(
+accelerometer_trusted_df = glueContext.create_dynamic_frame.from_options(
     format_options={"multiline": False},
     connection_type="s3",
     format="json",
     connection_options={
-        "paths": ["s3://stedi-project-udacity/accelerometer_trusted/"],
+        "paths": ["s3://unique-bucket-name/accelerometer_trusted/"],
         "recurse": True,
     },
-    transformation_ctx="S3bucket_node1",
+    transformation_ctx="accelerometer_trusted_df",
 )
 
 # Script generated for node Amazon S3
-AmazonS3_node1692030001186 = glueContext.create_dynamic_frame.from_options(
+step_trainer_trusted_df = glueContext.create_dynamic_frame.from_options(
     format_options={"multiline": False},
     connection_type="s3",
     format="json",
     connection_options={
-        "paths": ["s3://stedi-project-udacity/step_trainer_trusted/"],
+        "paths": ["s3://unique-bucket-name/step_trainer_trusted/"],
         "recurse": True,
     },
-    transformation_ctx="AmazonS3_node1692030001186",
+    transformation_ctx="step_trainer_trusted_df",
 )
 
 # Script generated for node Join
-Join_node1692034397757 = Join.apply(
-    frame1=S3bucket_node1,
-    frame2=AmazonS3_node1692030001186,
+joined_df = Join.apply(
+    frame1=accelerometer_trusted_df,
+    frame2=step_trainer_trusted_df,
     keys1=["timeStamp"],
     keys2=["sensorReadingTime"],
-    transformation_ctx="Join_node1692034397757",
+    transformation_ctx="joined_df",
 )
 
 # Script generated for node Drop Fields
-DropFields_node1692034429091 = DropFields.apply(
-    frame=Join_node1692034397757,
+cleaned_df = DropFields.apply(
+    frame=joined_df,
     paths=["user"],
-    transformation_ctx="DropFields_node1692034429091",
+    transformation_ctx="cleaned_df",
 )
 
 # Script generated for node S3 bucket
-S3bucket_node3 = glueContext.write_dynamic_frame.from_options(
-    frame=DropFields_node1692034429091,
+glueContext.write_dynamic_frame.from_options(
+    frame=cleaned_df,
     connection_type="s3",
     format="json",
     connection_options={
-        "path": "s3://stedi-project-udacity/machine_learning_curated/",
+        "path": "s3://unique-bucket-name/machine_learning_curated/",
         "partitionKeys": [],
     },
-    transformation_ctx="S3bucket_node3",
+    transformation_ctx="s3_output",
 )
 
 job.commit()

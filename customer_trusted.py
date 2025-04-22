@@ -19,7 +19,7 @@ S3bucket_node1 = glueContext.create_dynamic_frame.from_options(
     connection_type="s3",
     format="json",
     connection_options={
-        "paths": ["s3://stedi-project-udacity/customer_landing/"],
+        "paths": ["s3://unique-bucket-name/customer_landing/"],
         "recurse": True,
     },
     transformation_ctx="S3bucket_node1",
@@ -38,7 +38,7 @@ S3bucket_node3 = glueContext.write_dynamic_frame.from_options(
     connection_type="s3",
     format="json",
     connection_options={
-        "path": "s3://stedi-project-udacity/customer_trusted/",
+        "path": "s3://unique-bucket-name/customer_trusted/",
         "partitionKeys": [],
     },
     transformation_ctx="S3bucket_node3",
